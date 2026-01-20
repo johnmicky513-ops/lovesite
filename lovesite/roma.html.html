@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>For Roma Darling ❤️</title>
+<meta charset="UTF-8">
+
+<style>
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+background:#ffc0cb;
+font-family:'Segoe UI',sans-serif;
+overflow:hidden;
+}
+
+/* Envelope */
+.envelope{
+width:260px;
+height:170px;
+background:#ff6b9d;
+position:relative;
+border-radius:10px;
+cursor:pointer;
+}
+.flap{
+position:absolute;
+top:0;
+width:100%;
+height:100%;
+background:#ff3b7c;
+clip-path:polygon(0 0,100% 0,50% 50%);
+transition:0.8s;
+transform-origin:top;
+}
+.open .flap{transform:rotateX(180deg);}
+
+.letter{
+position:absolute;
+bottom:0;
+width:100%;
+height:100%;
+background:white;
+border-radius:10px;
+display:none;
+padding:15px;
+text-align:center;
+}
+
+.open .letter{display:block;}
+
+/* Card */
+.card{
+background:white;
+padding:20px;
+border-radius:20px;
+width:320px;
+text-align:center;
+display:none;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+h1{color:#ff3b6f;}
+
+/* Tulips */
+.tulip{
+position:absolute;
+bottom:0;
+font-size:50px;
+animation:sway 3s infinite;
+}
+.left{left:10px;}
+.right{right:10px;}
+@keyframes sway{
+0%,100%{transform:rotate(0);}
+50%{transform:rotate(5deg);}
+}
+
+/* Maze */
+#maze{
+display:grid;
+grid-template-columns:repeat(5,50px);
+gap:5px;
+margin:auto;
+}
+.cell{
+width:50px;
+height:50px;
+background:#ffd1dc;
+}
+.wall{background:#ff3b6f;}
+.player{background:#fff;border-radius:50%;}
+.goal{background:#6aff95;}
+
+/* Photos */
+.photos{display:none;gap:10px;flex-wrap:wrap;}
+.photos img{
+width:90px;
+height:90px;
+border-radius:15px;
+animation:bounce 2s infinite;
+}
+@keyframes bounce{
+50%{transform:scale(1.1);}
+}
+
+/* Hearts */
+.heart{
+position:absolute;
+font-size:20px;
+animation:fall 5s linear infinite;
+}
+@keyframes fall{
+0%{transform:translateY(-100px);}
+100%{transform:translateY(100vh);}
+}
+</style>
+</head>
+
+<body>
+
+<audio id="music" loop>
+<source src="love.mp3" type="audio/mpeg">
+</audio>
+
+<div class="tulip left">🌷🌷🌷</div>
+<div class="tulip right">🌷🌷🌷</div>
+
+<!-- Envelope -->
+<div class="envelope" onclick="openEnvelope()" id="env">
+<div class="flap"></div>
+<div class="letter">
+<p>Click to open ❤️</p>
+</div>
+</div>
+
+<!-- Main card -->
+<div class="card" id="card">
+<h1>Roma Darling ❤️</h1>
+<p>Finish the maze to unlock surprise 💌</p>
+
+<div id="maze"></div>
+
+<p id="status"></p>
+
+<div class="photos" id="photos">
+<img src="p1.jpg">
+<img src="p2.jpg">
+<img src="p3.jpg">
+<img src="p4.jpg">
+<img src="p5.jpg">
+</div>
+</div>
+
+<script>
+function openEnvelope(){
+document.getElementById("env").classList.add("open");
+setTimeout(()=>{
+document.getElementById("env").style.display="none";
+document.getElementById("card").style.display="block";
+document.getElementById("music").play();
+},1000);
+}
+
+/* Maze setup */
+const mazeLayout=[
+["p","", "w","", ""],
+["w","", "w","", "w"],
+["","", "", "", ""],
+["w","w","", "w",""],
+["","", "", "", "g"]
+];
+
+const maze=document.getElementById("maze");
+let px=0,py=0;
+
+function draw(){
+maze.innerHTML="";
+mazeLayout.forEach((row,y)=>{
+row.forEach((cell,x)=>{
+let d=document.createElement("div");
+d.className="cell";
+if(cell=="w")d.classList.add("wall");
+if(x==px && y==py)d.classList.add("player");
+if(cell=="g")d.classList.add("goal");
+maze.appendChild(d);
+});
+});
+}
+draw();
+
+document.addEventListener("keydown",e=>{
+let nx=px,ny=py;
+if(e.key=="ArrowRight")nx++;
+if(e.key=="ArrowLeft")nx--;
+if(e.key=="ArrowUp")ny--;
+if(e.key=="ArrowDown")ny++;
+
+if(mazeLayout[ny] && mazeLayout[ny][nx]!="w"){
+px=nx;py=ny;
+draw();
+if(mazeLayout[py][px]=="g"){
+document.getElementById("status").innerHTML="You won! 💖";
+document.getElementById("photos").style.display="flex";
+}
+}
+});
+
+/* falling hearts */
+setInterval(()=>{
+let h=document.createElement("div");
+h.className="heart";
+h.innerHTML="❤️";
+h.style.left=Math.random()*100+"vw";
+document.body.appendChild(h);
+setTimeout(()=>h.remove(),5000);
+},300);
+</script>
+
+</body>
+</html>
